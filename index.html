@@ -442,38 +442,68 @@
       .build-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
       .build-status {
+        --ch: var(--muted);
         display: flex;
         align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
+        gap: 12px;
         margin: 16px -16px -16px;
-        padding: 10px 16px;
+        padding: 11px 16px;
         border-top: 1px solid var(--line);
+        background: linear-gradient(90deg, var(--ch-bg, transparent), transparent 85%);
+        line-height: 1.4;
+      }
+      .build-status[data-channel="alpha"] { --ch: var(--alpha); --ch-bg: var(--alpha-bg); border-top-color: var(--alpha-line); }
+      .build-status[data-channel="beta"]  { --ch: var(--beta);  --ch-bg: var(--beta-bg);  border-top-color: var(--beta-line); }
+      .build-channel {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        flex: none;
+        padding: 3px 9px 3px 8px;
+        border: 1px solid color-mix(in srgb, var(--ch) 40%, transparent);
+        border-radius: var(--radius-full);
+        background: color-mix(in srgb, var(--ch) 12%, transparent);
+        color: var(--ch);
         font-family: var(--mono);
         font-size: 11px;
         font-weight: 600;
         letter-spacing: 0.08em;
         text-transform: uppercase;
-        line-height: 1.4;
       }
-      .build-status::before {
+      .build-channel::before {
         content: "";
         width: 6px; height: 6px;
-        flex: none;
         border-radius: 50%;
         background: currentColor;
-        box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--ch) 18%, transparent);
       }
-      .build-status[data-channel="alpha"] {
-        color: var(--alpha);
-        background: var(--alpha-bg);
-        border-top-color: var(--alpha-line);
+      .build-note {
+        flex: 1;
+        min-width: 0;
+        font-size: 12px;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
-      .build-status[data-channel="beta"] {
-        color: var(--beta);
-        background: var(--beta-bg);
-        border-top-color: var(--beta-line);
+      .build-track {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: none;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted-2);
       }
+      .build-track i {
+        width: 18px; height: 4px;
+        border-radius: 2px;
+        background: var(--line-2);
+      }
+      .build-track i.on { background: var(--ch); }
+      .build-track b { font-weight: 600; margin-left: 4px; }
 
       .build-empty {
         padding: 30px 16px;
@@ -495,7 +525,65 @@
       .dl-footer a { color: var(--accent); }
       .dl-footer a:hover { text-decoration: underline; }
 
+      .link-btn {
+        padding: 0;
+        border: 0;
+        background: none;
+        font: inherit;
+        color: var(--accent);
+        cursor: pointer;
+      }
+      .link-btn:hover { text-decoration: underline; }
+      .link-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+      .ap-overlay { z-index: 110; }
+      .ap-panel { max-width: 480px; }
+      .ap-panel .dl-head h2 { display: flex; align-items: center; gap: 10px; }
+      .ap-panel .dl-head h2::before {
+        content: "";
+        width: 6px; height: 6px;
+        flex: none;
+        background: var(--beta);
+      }
+      .ap-body p { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+      .ap-body p strong { color: var(--text); font-weight: 600; }
+      .ap-odds {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 4px 0 16px;
+        padding: 12px 14px;
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .ap-odds-bar { flex: 1; height: 6px; border-radius: 3px; background: var(--line-2); overflow: hidden; }
+      .ap-odds-bar span { display: block; height: 100%; width: 70%; background: var(--accent); }
+      .ap-odds strong { font-family: var(--mono); color: var(--accent); font-size: 13px; }
+      .ap-tldr {
+        padding: 14px 16px;
+        background: var(--alpha-bg);
+        border: 1px solid var(--alpha-line);
+        border-left: 2px solid var(--alpha);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        color: var(--text);
+      }
+      .ap-tldr span {
+        display: block;
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--alpha);
+        margin-bottom: 4px;
+      }
+
       @media (max-width: 640px) {
+        .build-note { display: none; }
         .site-nav { display: none; }
         .card { padding: 22px 18px; }
         .two-col { grid-template-columns: 1fr; }
@@ -681,7 +769,9 @@
                 <button class="btn btn-primary btn-small" type="button" disabled>Download</button>
               </div>
               <footer class="build-status" data-channel="beta">
-                <span>Beta</span>
+                <span class="build-channel">Beta</span>
+                <span class="build-note">Half polished, half not.</span>
+                <span class="build-track" title="Beta: step 2 of 3 to Stable"><i class="on"></i><i class="on"></i><i></i><b>2/3</b></span>
               </footer>
             </article>
 
@@ -697,7 +787,9 @@
                 <button class="btn btn-secondary btn-small" type="button" id="copy-drive">Copy Drive link</button>
               </div>
               <footer class="build-status" data-channel="alpha">
-                <span>Alpha</span>
+                <span class="build-channel">Alpha</span>
+                <span class="build-note">Rough, unfinished, expect bugs.</span>
+                <span class="build-track" title="Alpha: step 1 of 3 to Stable"><i class="on"></i><i></i><i></i><b>1/3</b></span>
               </footer>
             </article>
           </div>
@@ -707,11 +799,35 @@
           </div>
 
           <div data-platform="android" role="tabpanel" hidden>
-            <p class="build-empty">Android builds arrive with the first stable release.</p>
+            <p class="build-empty">Android Version will be released in August 2027. <button class="link-btn" type="button" id="android-more">Learn more..</button></p>
           </div>
         </div>
 
         <p class="dl-footer">For update logs, check the <a href="https://www.moddb.com/mods/unity-cb-remaster" target="_blank" rel="noreferrer">ModDB page</a>.</p>
+      </div>
+    </div>
+
+    <div class="dl-overlay ap-overlay" id="ap-overlay" hidden>
+      <div class="dl-panel ap-panel" role="dialog" aria-modal="true" aria-labelledby="ap-title">
+        <div class="dl-head">
+          <h2 id="ap-title">Android Project 2027</h2>
+          <button class="dl-close" type="button" aria-label="Close" id="ap-close">×</button>
+        </div>
+        <div class="ap-body">
+          <p>This is a complicated situation. After the <strong>Stable PC version</strong> is released, the game will be rebuilt for Android with a budget of <strong>3 months</strong>.</p>
+          <p>Why 3 months? Why not more? Because of my personal life: I'm leaving my home country for the UAE, from September to late August. I do <strong>not</strong> have a laptop for portability, and everything is worked on PC.</p>
+          <p>These plans can change if I get a laptop.</p>
+          <div class="ap-odds">
+            <span>Chance of getting a laptop</span>
+            <div class="ap-odds-bar" aria-hidden="true"><span></span></div>
+            <strong>70%</strong>
+          </div>
+          <p>However, if I don't get the laptop, 3 months may not be enough to rebuild it fully. In that case it can be released as a final beta version: rushed, and some features may be missing.</p>
+          <div class="ap-tldr">
+            <span>Simple terms</span>
+            Android will be rushed. Do not expect stable, or it may even be cancelled!
+          </div>
+        </div>
       </div>
     </div>
 
@@ -742,8 +858,22 @@
         overlay.addEventListener("click", e => {
           if (!panel.contains(e.target)) close();
         });
+        const apOverlay = document.getElementById("ap-overlay");
+        const apPanel = apOverlay.querySelector(".dl-panel");
+        const apClose = document.getElementById("ap-close");
+        const apOpen = document.getElementById("android-more");
+        const closeAp = () => { apOverlay.hidden = true; apOpen.focus(); };
+        apOpen.addEventListener("click", () => { apOverlay.hidden = false; apClose.focus(); });
+        apClose.addEventListener("click", closeAp);
+        apOverlay.addEventListener("click", e => {
+          e.stopPropagation();
+          if (!apPanel.contains(e.target)) closeAp();
+        });
+
         document.addEventListener("keydown", e => {
-          if (e.key === "Escape" && !overlay.hidden) close();
+          if (e.key !== "Escape") return;
+          if (!apOverlay.hidden) closeAp();
+          else if (!overlay.hidden) close();
         });
 
         filters.forEach(f => {
