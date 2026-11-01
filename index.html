@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unity:CBR (Remaster)</title>
+    <meta name="color-scheme" content="dark" />
+    <script>document.documentElement.style.colorScheme = "dark";</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+      *, *::before, *::after { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-size: 15px;
+        line-height: 1.65;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      a { color: inherit; text-decoration: none; }
+      h1, h2, h3, h4, p, ul, ol, dl, dd { margin: 0; }
+      ul, ol { padding: 0; list-style: none; }
+
+      :root {
+        --bg: #0a0f0d;
+        --bg-2: #121917;
+        --bg-3: #1a2420;
+        --bg-4: #212b26;
+        --border: rgba(255,255,255,0.07);
+        --border-2: rgba(255,255,255,0.12);
+        --text: #e8ece9;
+        --muted: #8a9690;
+        --muted-2: #5f6a64;
+        --accent: #6ee7a7;
+        --accent-bg: rgba(110,231,167,0.08);
+        --accent-border: rgba(110,231,167,0.18);
+        --radius: 12px;
+        --radius-sm: 8px;
+        --radius-full: 999px;
+      }
+
+      .container { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+      /* Header */
+      .site-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 14px; letter-spacing: 0.02em; }
+      .brand-icon {
+        display: grid; place-items: center;
+        width: 28px; height: 28px;
+        border-radius: 8px;
+        border: 1px solid var(--border-2);
+        color: var(--accent);
+        font-weight: 600; font-size: 13px;
+      }
+      .brand-muted { color: var(--muted-2); }
+      .site-nav { display: flex; gap: 26px; font-size: 14px; color: var(--muted); margin-left: auto; margin-right: 8px; }
+      .site-nav a:hover { color: var(--text); }
+
+      /* Main */
+      main { padding: 48px 0 56px; display: flex; flex-direction: column; gap: 20px; }
+
+      /* Hero */
+      .hero { padding-bottom: 8px; }
+      .hero-meta { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+      .status-dot {
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 8px rgba(110,231,167,0.5);
+        display: inline-block;
+        flex-shrink: 0;
+      }
+      .hero h1 {
+        font-size: clamp(36px, 5.5vw, 56px);
+        font-weight: 600;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+      }
+      .hero h1 .title-dim { color: var(--muted-2); font-weight: 500; }
+      .hero-lede { margin-top: 18px; max-width: 540px; font-size: 16px; color: var(--muted); }
+
+      /* Cards */
+      .card {
+        background: var(--bg-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px 28px;
+      }
+      .card h2 { font-size: 18px; font-weight: 600; margin-bottom: 14px; letter-spacing: -0.01em; }
+      .card p { color: var(--muted); margin-bottom: 12px; }
+      .card p:last-child { margin-bottom: 0; }
+      .card p strong { color: var(--text); font-weight: 600; }
+
+      .muted { color: var(--muted); }
+      .small { font-size: 13px; }
+
+      /* Callout */
+      .callout {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-top: 20px;
+        padding: 14px 16px;
+        background: var(--accent-bg);
+        border: 1px solid var(--accent-border);
+        border-radius: var(--radius-sm);
+        flex-wrap: wrap;
+      }
+      .callout div { display: flex; flex-direction: column; gap: 2px; }
+      .callout strong { color: var(--text); font-size: 14px; font-weight: 600; }
+      .callout span { color: var(--muted); font-size: 13px; }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: var(--radius-sm);
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+        font-family: inherit;
+      }
+      .btn-small { padding: 7px 12px; font-size: 13px; }
+      .btn-block { width: 100%; }
+      .btn-primary { background: var(--accent); color: #0a0f0d; }
+      .btn-primary:hover { background: #88eeb6; }
+      .btn-secondary { background: transparent; border-color: var(--border-2); color: var(--text); }
+      .btn-secondary:hover { background: var(--bg-3); }
+      .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+      .btn:disabled:hover { background: transparent; }
+
+      /* Release grid */
+      .release-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+      .release-item { padding: 14px 16px; background: var(--bg-3); border-radius: var(--radius-sm); }
+      .tag {
+        display: inline-block;
+        font-size: 11px; font-weight: 500;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 6px;
+      }
+      .release-item p { font-size: 13px; margin: 0; }
+
+      .release-date {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 12px 16px;
+        background: var(--bg-3);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+      }
+      .release-date span { color: var(--muted); }
+      .release-date strong { font-weight: 600; }
+
+      /* Features */
+      .feature-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+      .feature-list li {
+        font-size: 13px;
+        padding: 6px 12px;
+        background: var(--bg-3);
+        border-radius: var(--radius-full);
+        color: var(--text);
+      }
+
+      /* Version list */
+      .version-list { display: flex; flex-direction: column; margin-bottom: 16px; }
+      .version-list > div {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 16px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+        align-items: baseline;
+      }
+      .version-list > div:first-child { padding-top: 0; }
+      .version-list > div:last-child { border-bottom: 0; padding-bottom: 0; }
+      .version-list dt { font-weight: 600; font-size: 14px; }
+      .version-list dt small { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 4px; }
+      .version-list dd { font-size: 14px; color: var(--muted); margin: 0; }
+
+      /* Two column */
+      .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+      /* Credits */
+      .credits-list { margin-bottom: 14px; }
+      .credits-list li {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+      }
+      .credits-list li:first-child { padding-top: 0; }
+      .credits-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+      .credits-list li span:first-child { color: var(--text); }
+      .credits-list li span:last-child { color: var(--muted); text-align: right; font-size: 13px; }
+
+      /* Footer */
+      .site-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px 0;
+        border-top: 1px solid var(--border);
+        font-size: 13px;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+      .site-footer > div:first-child { display: flex; gap: 20px; }
+      .site-footer a { color: var(--muted); }
+      .site-footer a:hover { color: var(--text); }
+
+      /* Download overlay */
+      .dl-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: grid;
+        place-items: center;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        animation: fade-in 0.15s ease;
+      }
+      .dl-overlay[hidden] { display: none; }
+      .dl-panel {
+        width: 100%;
+        max-width: 520px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        background: var(--bg-2);
+        border: 1px solid var(--border-2);
+        border-radius: 16px;
+        padding: 22px;
+        animation: panel-in 0.2s ease;
+      }
+      @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes panel-in { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+      .dl-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .dl-head h2 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; }
+      .dl-close {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+        display: grid; place-items: center;
+      }
+      .dl-close:hover { background: var(--bg-3); color: var(--text); }
+
+      .dl-filters {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 16px;
+        padding: 4px;
+        background: var(--bg-3);
+        border-radius: var(--radius-sm);
+      }
+      .dl-filter {
+        flex: 1;
+        padding: 8px 12px;
+        font-size: 13px;
+        font-family: inherit;
+        color: var(--muted);
+        background: transparent;
+        border: 0;
+        border-radius: 6px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .dl-filter:hover { color: var(--text); }
+      .dl-filter.is-active { background: var(--bg-4); color: var(--text); }
+      .dl-filter:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+      .build {
+        padding: 16px;
+        background: var(--bg-3);
+        border-radius: var(--radius-sm);
+        margin-bottom: 10px;
+      }
+      .build:last-child { margin-bottom: 0; }
+      .build[data-status="upcoming"] { opacity: 0.55; }
+      .build-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .build-head h3 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+      .build-meta { font-size: 13px; color: var(--muted); }
+      .build-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+      .build-empty {
+        padding: 32px 16px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        background: var(--bg-3);
+        border-radius: var(--radius-sm);
+      }
+
+      .dl-footer {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .dl-footer a { color: var(--accent); }
+      .dl-footer a:hover { text-decoration: underline; }
+
+      /* Responsive */
+      @media (max-width: 640px) {
+        .site-nav { display: none; }
+        .card { padding: 20px; }
+        .two-col { grid-template-columns: 1fr; }
+        .release-grid { grid-template-columns: 1fr; }
+        .version-list > div { grid-template-columns: 1fr; gap: 4px; }
+        .dl-filter { padding: 8px 6px; font-size: 12px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="site-header">
+        <a href="#top" class="brand" aria-label="Unity:CBR home">
+          <span class="brand-icon">U</span>
+          <span>Unity<span class="brand-muted">:CBR</span></span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="#description">About</a>
+          <a href="#story">Story</a>
+          <a href="#features">Features</a>
+          <a href="#credits">Credits</a>
+        </nav>
+        <button class="btn btn-secondary btn-small" data-open-downloads>Download</button>
+      </header>
+
+      <main id="top">
+        <section class="hero">
+          <div class="hero-meta">
+            <span class="status-dot" aria-hidden="true"></span>
+            In development · Unity 6
+          </div>
+          <h1>Unity:CBR <span class="title-dim">(Remaster)</span></h1>
+          <p class="hero-lede">A fan remaster of SCP: Containment Breach, rebuilt from scratch in Unity 6.</p>
+        </section>
+
+        <section id="description" class="card">
+          <h2>Description</h2>
+          <p><strong>Unity:CB Remaster</strong> is a fan redo of SCP: Containment Breach. It's made in Unity 6, built from scratch, and uses assets from the original CB, Ultimate Edition Reborn, and a few kind creators credited below.</p>
+          <p>Android is planned, but it won't arrive until the first stable version or later. Burnout is a real thing and I'd like to actually finish this one.</p>
+          <div class="callout">
+            <div>
+              <strong>Follow or join the Discord</strong>
+              <span>Most update leaks and news end up there.</span>
+            </div>
+            <a href="https://discord.gg/29qjGnWq2g" target="_blank" rel="noreferrer" class="btn btn-secondary btn-small">Join ↗</a>
+          </div>
+        </section>
+
+        <section id="story" class="card">
+          <h2>Story</h2>
+          <p>You play as a Chaos Insurgency spy dressed up as a Level 4 researcher. Problem: you lost your keycard on the way in. Now you're hunting keycards around the facility like it's your first day again.</p>
+          <p>You came in through Gate B to grab intel, steal some classified docs, and get out. Halfway through, you find a room where the floor just ends. Nothing but void beyond it.</p>
+          <p>The floor ends. Beyond it is void. You step onto it anyway.</p>
+        </section>
+
+        <section id="releases" class="card">
+          <h2>Releases</h2>
+          <div class="release-grid">
+            <div class="release-item">
+              <span class="tag">Alpha / Beta</span>
+              <p>Roughly every 2 weeks to a month. Sometimes longer, no promises.</p>
+            </div>
+            <div class="release-item">
+              <span class="tag">Stable</span>
+              <p>After beta. Whenever that is.</p>
+            </div>
+          </div>
+          <div class="release-date">
+            <span>Release target</span>
+            <strong>May to June 2027</strong>
+          </div>
+        </section>
+
+        <section id="commitment" class="card">
+          <h2>Built to finish</h2>
+          <p>Past projects like GPA got removed. The older ones had a habit of sitting in beta forever. Not repeating that.</p>
+          <p>This one gets an inventory, proper player systems, the works. The plan is to actually finish it.</p>
+        </section>
+
+        <section id="features" class="card">
+          <h2>Features</h2>
+          <ul class="feature-list">
+            <li>Inventory system</li>
+            <li>Items and key security</li>
+            <li>DNA and passcodes</li>
+            <li>Physics</li>
+            <li>Detailed environments</li>
+          </ul>
+          <p class="muted small">And more. Update logs go up on ModDB when builds drop.</p>
+        </section>
+
+        <section id="versioning" class="card">
+          <h2>Versioning</h2>
+          <dl class="version-list">
+            <div>
+              <dt>Alpha</dt>
+              <dd>Earliest version. Rough, unfinished, expect bugs.</dd>
+            </div>
+            <div>
+              <dt>Beta</dt>
+              <dd>After alpha. Half polished, half not.</dd>
+            </div>
+            <div>
+              <dt>Stable <small>(regular)</small></dt>
+              <dd>After beta. Finished. Finally.</dd>
+            </div>
+          </dl>
+          <p class="muted small">Official sources: itch.io, ModDB, and the Discord server. Steam and Google Play Store aren't happening.</p>
+        </section>
+
+        <div class="two-col">
+          <section id="requirements" class="card">
+            <h2>Requirements</h2>
+            <p class="muted">Soon.</p>
+          </section>
+          <section id="platforms" class="card">
+            <h2>Platforms</h2>
+            <p>Windows<br>Android</p>
+            <p class="muted small">macOS and Linux are still being considered.</p>
+          </section>
+        </div>
+
+        <section id="credits" class="card">
+          <h2>Credits</h2>
+          <ul class="credits-list">
+            <li><span>SCP: Containment Breach</span><span>Assets, textures, etc.</span></li>
+            <li><span>Vefects</span><span>Unity Asset Store · effects</span></li>
+            <li><span>TRITH</span><span>Sketchfab · models</span></li>
+            <li><span>ThatJamGuy</span><span>Sketchfab · models</span></li>
+            <li><span>Verdian</span><span>Unity Asset Store · base maps to PBR / mask</span></li>
+            <li><span>nixyg59</span><span>Discord · voice acting in an old project</span></li>
+          </ul>
+          <p class="muted small">And more credits are coming.</p>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div>
+          <a href="https://www.moddb.com/mods/unity-cb-remaster" target="_blank" rel="noreferrer">ModDB ↗</a>
+          <a href="https://discord.gg/29qjGnWq2g" target="_blank" rel="noreferrer">Discord ↗</a>
+        </div>
+        <div class="muted small">Unity:CBR (Remaster)</div>
+      </footer>
+    </div>
+
+    <!-- Download panel -->
+    <div class="dl-overlay" id="dl-overlay" hidden>
+      <div class="dl-panel" role="dialog" aria-modal="true" aria-labelledby="dl-title">
+        <div class="dl-head">
+          <h2 id="dl-title">Latest Builds</h2>
+          <button class="dl-close" type="button" aria-label="Close" id="dl-close">×</button>
+        </div>
+
+        <div class="dl-filters" role="tablist" aria-label="Platform">
+          <button class="dl-filter is-active" type="button" role="tab" aria-selected="true" data-filter="windows">Windows</button>
+          <button class="dl-filter" type="button" role="tab" aria-selected="false" data-filter="macos">MacOS Arm</button>
+          <button class="dl-filter" type="button" role="tab" aria-selected="false" data-filter="android">Android</button>
+        </div>
+
+        <div class="dl-content">
+          <div data-platform="windows" role="tabpanel">
+            <article class="build" data-status="upcoming">
+              <div class="build-head">
+                <div>
+                  <h3>Unity:CBR v1.4</h3>
+                  <p class="build-meta">Release in 19th November 2026</p>
+                </div>
+              </div>
+              <div class="build-actions">
+                <button class="btn btn-primary btn-small" type="button" disabled>Download</button>
+              </div>
+            </article>
+
+            <article class="build" data-status="live">
+              <div class="build-head">
+                <div>
+                  <h3>Unity:CBR v1.3</h3>
+                  <p class="build-meta">Windows · Google Drive</p>
+                </div>
+              </div>
+              <div class="build-actions">
+                <a class="btn btn-primary btn-small" href="https://drive.google.com/uc?export=download&id=1B8_CUCdHnEnytmKeDSOUkBOtV22kEunz" target="_blank" rel="noreferrer">Download</a>
+                <button class="btn btn-secondary btn-small" type="button" id="copy-drive">Copy Drive link</button>
+              </div>
+            </article>
+          </div>
+
+          <div data-platform="macos" role="tabpanel" hidden>
+            <p class="build-empty">Nothing for MacOS Arm yet. Still being considered.</p>
+          </div>
+
+          <div data-platform="android" role="tabpanel" hidden>
+            <p class="build-empty">Android builds arrive with the first stable release.</p>
+          </div>
+        </div>
+
+        <p class="dl-footer">For update logs, check the <a href="https://www.moddb.com/mods/unity-cb-remaster" target="_blank" rel="noreferrer">ModDB page</a>.</p>
+      </div>
+    </div>
+
+    <script>
+      (() => {
+        const overlay = document.getElementById("dl-overlay");
+        const panel = overlay.querySelector(".dl-panel");
+        const closeBtn = document.getElementById("dl-close");
+        const openers = document.querySelectorAll("[data-open-downloads]");
+        const filters = overlay.querySelectorAll(".dl-filter");
+        const platforms = overlay.querySelectorAll(".dl-content > [data-platform]");
+        let lastFocus = null;
+
+        const open = () => {
+          lastFocus = document.activeElement;
+          overlay.hidden = false;
+          document.body.style.overflow = "hidden";
+          closeBtn.focus();
+        };
+        const close = () => {
+          overlay.hidden = true;
+          document.body.style.overflow = "";
+          if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+        };
+
+        openers.forEach(b => b.addEventListener("click", open));
+        closeBtn.addEventListener("click", close);
+        overlay.addEventListener("click", e => {
+          if (!panel.contains(e.target)) close();
+        });
+        document.addEventListener("keydown", e => {
+          if (e.key === "Escape" && !overlay.hidden) close();
+        });
+
+        filters.forEach(f => {
+          f.addEventListener("click", () => {
+            const target = f.dataset.filter;
+            filters.forEach(x => {
+              const active = x === f;
+              x.classList.toggle("is-active", active);
+              x.setAttribute("aria-selected", String(active));
+            });
+            platforms.forEach(el => {
+              el.hidden = el.dataset.platform !== target;
+            });
+          });
+        });
+
+        const driveView = "https://drive.google.com/file/d/1B8_CUCdHnEnytmKeDSOUkBOtV22kEunz/view?usp=drivesdk";
+        const copyBtn = document.getElementById("copy-drive");
+        copyBtn.addEventListener("click", async () => {
+          const prev = copyBtn.textContent;
+          try {
+            await navigator.clipboard.writeText(driveView);
+          } catch {
+            window.prompt("Copy the Drive link:", driveView);
+            return;
+          }
+          copyBtn.textContent = "Copied";
+          setTimeout(() => { copyBtn.textContent = prev; }, 1800);
+        });
+      })();
+    </script>
+  </body>
+</html>
